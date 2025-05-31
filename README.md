@@ -13,15 +13,31 @@ A Hammerspoon Spoon that provides deep integration with [SuperWhisper](https://s
 
 ## Installation
 
+### Method 1: Simple Installation (Recommended)
+
 1. Download the [latest release](https://github.com/YOUR_USERNAME/SuperWhisper.spoon/releases/latest) or clone this repository
 2. Double-click `SuperWhisper.spoon` to install it to `~/.hammerspoon/Spoons/`
-3. Add the following to your `~/.hammerspoon/init.lua`:
+3. Add just this one line to your `~/.hammerspoon/init.lua`:
+
+```lua
+hs.loadSpoon("SuperWhisper")
+```
+
+**That's it!** The spoon will automatically:
+
+- Set up default hotkeys (Cmd+Shift+R, Q, C, M)
+- Create a menu bar icon
+- Start monitoring for transcriptions
+
+### Method 2: Custom Configuration
+
+If you want to customize hotkeys or behavior:
 
 ```lua
 -- Load the spoon
 hs.loadSpoon("SuperWhisper")
 
--- Basic setup with hotkeys
+-- Custom hotkey setup (overrides defaults)
 spoon.SuperWhisper:bindHotkeys({
     toggleRecording = {{"cmd", "alt"}, "r"},
     quickRecord = {{"cmd", "alt"}, "s"},
@@ -29,9 +45,25 @@ spoon.SuperWhisper:bindHotkeys({
     openMenu = {{"cmd", "alt", "shift"}, "m"}
 })
 
--- Start the spoon (creates menu bar item)
-spoon.SuperWhisper:start()
+-- Enable auto-paste
+spoon.SuperWhisper:enableAutoPaste("Google Chrome")
 ```
+
+## Default Hotkeys
+
+When using simple installation, these hotkeys are automatically configured:
+
+- **Cmd+Shift+R**: Toggle recording on/off
+- **Cmd+Shift+Q**: Quick record with default mode
+- **Cmd+Shift+C**: Copy last transcription to clipboard
+- **Cmd+Shift+M**: Open mode chooser dialog
+
+## Requirements
+
+- macOS
+- [Hammerspoon](https://www.hammerspoon.org) 0.9.90 or later
+- [SuperWhisper](https://superwhisper.com) app installed and configured
+- SuperWhisper modes should be stored in `~/Library/Application Support/superwhisper/modes/`
 
 ## Usage Examples
 
@@ -90,8 +122,6 @@ end
 
 ## API Documentation
 
-See the [API documentation](docs.json) for complete method reference.
-
 ### Key Methods
 
 - `start()` - Start the spoon with menu bar
@@ -104,12 +134,22 @@ See the [API documentation](docs.json) for complete method reference.
 - `enableAutoPaste(appName, callback)` - Enable automatic pasting
 - `showModeChooser()` - Display mode selection dialog
 
-## Requirements
+### Hotkey Mapping Format
 
-- macOS
-- [Hammerspoon](https://www.hammerspoon.org)
-- [SuperWhisper](https://superwhisper.com) app installed and configured
-- SuperWhisper modes should be stored in `~/Library/Application Support/superwhisper/modes/`
+The `bindHotkeys()` method accepts a table with the following keys:
+
+- `toggleRecording` - Toggle recording on/off
+- `quickRecord` - Quick record in default mode  
+- `copyLast` - Copy last transcription result
+- `openMenu` - Open the mode selection menu
+
+Each hotkey is specified as `{modifiers, key}` where modifiers is a table of modifier keys (`"cmd"`, `"alt"`, `"shift"`, `"ctrl"`) and key is the key name.
+
+## Troubleshooting
+
+- **Hotkeys not working**: Make sure Hammerspoon has Accessibility permissions in System Preferences
+- **Menu bar icon missing**: The spoon auto-starts, but you can manually call `spoon.SuperWhisper:start()`
+- **No transcriptions found**: Ensure SuperWhisper is saving to the default location
 
 ## License
 

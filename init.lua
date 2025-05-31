@@ -20,9 +20,13 @@ obj.modes = {}
 obj.watcher = nil
 obj.menubar = nil
 obj.hotkeys = {}
+obj.defaultHotkeysSet = false
 obj.autoPasteConfig = {
     enabled = false,
-    target = nil
+    target = {
+        app = nil,
+        callback = nil
+    }
 }
 
 --- SuperWhisper.logger
@@ -42,6 +46,21 @@ obj.logger = hs.logger.new('SuperWhisper')
 function obj:init()
     -- Load modes on init
     self:loadModes()
+    
+    -- Set up default hotkeys if none are configured
+    if not self.defaultHotkeysSet then
+        self:bindHotkeys({
+            toggleRecording = {{"cmd", "shift"}, "r"},
+            quickRecord = {{"cmd", "shift"}, "q"},
+            copyLast = {{"cmd", "shift"}, "c"},
+            openMenu = {{"cmd", "shift"}, "m"}
+        })
+        self.defaultHotkeysSet = true
+    end
+    
+    -- Auto-start the spoon
+    self:start()
+    
     return self
 end
 
@@ -269,10 +288,8 @@ end
 ---  * The SuperWhisper object
 function obj:enableAutoPaste(appName, callback)
     self.autoPasteConfig.enabled = true
-    self.autoPasteConfig.target = {
-        app = appName,
-        callback = callback
-    }
+    self.autoPasteConfig.target.app = appName
+    self.autoPasteConfig.target.callback = callback
     self:_startWatcher()
     return self
 end
